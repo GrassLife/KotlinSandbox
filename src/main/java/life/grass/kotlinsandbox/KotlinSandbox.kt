@@ -1,5 +1,7 @@
 package life.grass.kotlinsandbox
 
+import com.comphenix.protocol.ProtocolLibrary
+import life.grass.kotlinsandbox.listener.HotkeyListener
 import org.bukkit.plugin.java.JavaPlugin
 
 /**
@@ -11,6 +13,10 @@ class KotlinSandbox : JavaPlugin() {
         super.onEnable()
 
         println("Hello, World!")
+
+        val protocolManager = ProtocolLibrary.getProtocolManager()
+
+        server.pluginManager.registerEvents(HotkeyListener(protocolManager), this)
     }
 
 }
