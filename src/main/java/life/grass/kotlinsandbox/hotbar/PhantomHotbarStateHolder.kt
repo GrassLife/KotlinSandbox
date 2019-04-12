@@ -20,6 +20,13 @@ fun Player.openPhantomHotbar(phantomHotbar: PhantomHotbar) {
     phantomHotbar.openBy(this)
 }
 
+fun Player.choosePhantomHotbarSlot(slot: Int) {
+    val phantomHotbar = this.getOpeningPhantomHotbar() ?: return
+
+    phantomHotbar.chooseBy(this, slot)
+    closePhantomHotbar()
+}
+
 fun Player.closePhantomHotbar() {
     PhantomHotbarStateHolder.openingPhantomHotbarMap[this]?.closeBy(this) ?: return
     PhantomHotbarStateHolder.openingPhantomHotbarMap.remove(this)

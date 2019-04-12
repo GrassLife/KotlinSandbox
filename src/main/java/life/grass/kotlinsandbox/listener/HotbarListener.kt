@@ -1,14 +1,12 @@
 package life.grass.kotlinsandbox.listener
 
-import life.grass.kotlinsandbox.hotbar.PhantomHotbar
-import life.grass.kotlinsandbox.hotbar.closePhantomHotbar
-import life.grass.kotlinsandbox.hotbar.isOpeningHotbarSlot
-import life.grass.kotlinsandbox.hotbar.openPhantomHotbar
+import life.grass.kotlinsandbox.hotbar.*
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.entity.PlayerDeathEvent
 import org.bukkit.event.inventory.InventoryOpenEvent
+import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.event.player.PlayerQuitEvent
 import org.bukkit.event.player.PlayerSwapHandItemsEvent
 
@@ -20,12 +18,12 @@ class HotbarListener(private val registeredPhantomHotbarList: List<PhantomHotbar
     @EventHandler
     fun onSwapHandItems(event: PlayerSwapHandItemsEvent) {
         val player = event.player
-        val mainHandMaterial = event.mainHandItem?.type ?: return
+        val mainHandMaterial = event.offHandItem?.type ?: return
         val openedPhantomHotbar = registeredPhantomHotbarList
                 .find { hotbar -> hotbar.triggerMaterial == mainHandMaterial }
                 ?: return
 
-        if (player.isOpeningHotbarSlot()) {
+        if (!player.isOpeningHotbarSlot()) {
             event.isCancelled = true
 
             player.openPhantomHotbar(openedPhantomHotbar)
@@ -38,13 +36,23 @@ class HotbarListener(private val registeredPhantomHotbarList: List<PhantomHotbar
     }
 
     @EventHandler
+    fun onPlayerInteract(event: PlayerInteractEvent) {
+        val player = event.player
+        val hotbarSlotIndex = player.inventory.heldItemSlot.apply { println(this) }
+
+        if (player.isOpeningHotbarSlot()) {
+            player.choosePhantomHotbarSlot(hotbarSlotIndex)
+        }
+    }
+
+    @EventHandler
     fun onPlayerQuit(event: PlayerQuitEvent) {
-        event.player.closeInventory()
+        event.player.closePhantomHotbar()
     }
 
     @EventHandler
     fun onPlayerDeath(event: PlayerDeathEvent) {
-        event.entity.closeInventory()
+        event.entity.closePhantomHotbar()
     }
 
 }

@@ -15,10 +15,10 @@ class PhantomHotbar(val triggerMaterial: Material, // TODO: check more strictly
                     private val slotMap: Map<Int, PhantomHotbarSlot>) {
 
     companion object {
-        val defaultSlotIcon = ItemStack(Material.BLACK_STAINED_GLASS).apply {
+        private val defaultSlotIcon = ItemStack(Material.BLACK_STAINED_GLASS_PANE).apply {
             displayName = " "
         }
-        val protocolManager: ProtocolManager = ProtocolLibrary.getProtocolManager()
+        private val protocolManager: ProtocolManager = ProtocolLibrary.getProtocolManager()
     }
 
     fun openBy(player: Player) {
@@ -39,7 +39,6 @@ class PhantomHotbar(val triggerMaterial: Material, // TODO: check more strictly
         val hotbarSlot = slotMap[slot] ?: return
 
         hotbarSlot.action(player)
-        closeBy(player)
     }
 
     fun closeBy(player: Player) {
