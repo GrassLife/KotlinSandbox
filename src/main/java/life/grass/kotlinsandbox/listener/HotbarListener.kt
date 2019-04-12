@@ -4,7 +4,9 @@ import life.grass.kotlinsandbox.hotbar.*
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
+import org.bukkit.event.block.Action
 import org.bukkit.event.entity.PlayerDeathEvent
+import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.inventory.InventoryOpenEvent
 import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.event.player.PlayerQuitEvent
@@ -18,16 +20,22 @@ class HotbarListener(private val registeredPhantomHotbarList: List<PhantomHotbar
     @EventHandler
     fun onSwapHandItems(event: PlayerSwapHandItemsEvent) {
         val player = event.player
+
+        if (player.isOpeningHotbarSlot()) {
+            event.isCancelled = true
+            player.closePhantomHotbar()
+
+            return
+        }
+
         val mainHandMaterial = event.offHandItem?.type ?: return
         val openedPhantomHotbar = registeredPhantomHotbarList
                 .find { hotbar -> hotbar.triggerMaterial == mainHandMaterial }
                 ?: return
 
-        if (!player.isOpeningHotbarSlot()) {
-            event.isCancelled = true
 
-            player.openPhantomHotbar(openedPhantomHotbar)
-        }
+        event.isCancelled = true
+        player.openPhantomHotbar(openedPhantomHotbar)
     }
 
     @EventHandler
@@ -36,11 +44,17 @@ class HotbarListener(private val registeredPhantomHotbarList: List<PhantomHotbar
     }
 
     @EventHandler
+    fun onInventoryClick(event: InventoryClickEvent) {
+        (event.whoClicked as? Player)?.closePhantomHotbar()
+    }
+
+    @EventHandler
     fun onPlayerInteract(event: PlayerInteractEvent) {
         val player = event.player
-        val hotbarSlotIndex = player.inventory.heldItemSlot.apply { println(this) }
+        val hotbarSlotIndex = player.inventory.heldItemSlot
 
-        if (player.isOpeningHotbarSlot()) {
+        if (event.action in setOf(Action.LEFT_CLICK_AIR, Action.LEFT_CLICK_BLOCK) && player.isOpeningHotbarSlot()) {
+            event.isCancelled = true
             player.choosePhantomHotbarSlot(hotbarSlotIndex)
         }
     }
