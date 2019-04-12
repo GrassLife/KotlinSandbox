@@ -32,13 +32,14 @@ class HotbarListener(private val registeredPhantomHotbarList: List<PhantomHotbar
 
     @EventHandler
     fun onInventoryOpen(event: InventoryOpenEvent) {
+        // TODO: Eでのインベントリ開閉がキャッチできない
         (event.player as? Player)?.closePhantomHotbar()
     }
 
     @EventHandler
     fun onPlayerInteract(event: PlayerInteractEvent) {
         val player = event.player
-        val hotbarSlotIndex = player.inventory.heldItemSlot.apply { println(this) }
+        val hotbarSlotIndex = player.inventory.heldItemSlot
 
         if (player.isOpeningHotbarSlot()) {
             player.choosePhantomHotbarSlot(hotbarSlotIndex)
