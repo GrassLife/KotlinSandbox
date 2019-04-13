@@ -40,6 +40,7 @@ class HotbarListener(private val registeredPhantomHotbarList: List<PhantomHotbar
 
     @EventHandler
     fun onInventoryOpen(event: InventoryOpenEvent) {
+        // TODO: Eでのインベントリ開閉がキャッチできない
         (event.player as? Player)?.closePhantomHotbar()
     }
 
