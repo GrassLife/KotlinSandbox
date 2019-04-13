@@ -1,0 +1,4 @@
+name: KotlinSandbox
+version: @version@
+main: life.grass.kotlinsandbox.KotlinSandbox
+api-version: 1.13
